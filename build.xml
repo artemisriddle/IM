@@ -1,0 +1,30 @@
+<!-- Lauren LaGrone -->
+<!-- build.xml for IM -->
+
+<project>
+
+    <target name="clean">
+        <delete dir="build"/>
+    </target>
+
+    <target name="compile">
+        <mkdir dir="build"/>
+        <javac srcdir="." destdir="build"/>
+    </target>
+
+    <target name="jar">
+        <mkdir dir="build/jar"/>
+        <jar destfile="build/jar/im.jar" basedir="build">
+            <manifest>
+                <attribute name="TCPSender-Class" value="protocol.TCPSender"/>
+                <attribute name="TCPReceiver-Class" value="protocol.TCPReceiver"/>
+                <attribute name="WireFrameWidget-Class" value="protocol.WireFrameWidget"/>
+            </manifest>
+        </jar>
+    </target>
+
+    <target name="run">
+        <java jar="build/jar/im.jar" fork="true"/>
+    </target>
+
+</project>

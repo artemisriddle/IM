@@ -1,0 +1,52 @@
+Name: Lauren LaGrone
+Date: 9/30/2015
+Program: Program 1: IM
+
+Packages/Files:
+  messaging.client:
+    Client.java - Holds user loop for client interaction. Handles initial registration, allows for all client/server interaction 
+      TO RUN: java messaging.client.Client <username>@<server address>:<port number>
+  messaging.server:
+    Server.java - Holds server information. Upon running, outputs the port number for clients to use. Currently threaded and can accept multiple contacts at once.
+      TO RUN: java.messaging.server.Server
+              ctrl+c to quit
+  messaging.protocol:
+    The following files are messages with self explanatory names. Each contains:
+      Two constructors (byte[] and a direct input version)
+      toByte(), which transforms the message into a byte array
+      various accessors to make my life easier
+          CLIENT_CONNECT_RESPONSE.java       id: 10
+          CLIENT_GOODBYE.java                id: 12
+          CLIENT_MESSAGE.java                id: 11
+          CLIENT_REQUEST_CONNECT.java        id: 9
+          DEREGISTRATION_MESSAGE.java        id: 5
+          REGISTRATION_MESSAGE.java          id: 3
+          REGISTRATION_RESPONSE.java         id: 4
+          REQUEST_REGISTERED_USERS.java      id: 7
+          RESPONSE_REGISTERED_USERS.java     id: 8
+    This package also contains the following files:
+      ClientInteraction.java - (Thread) Messaging logic for client-side interactions. Currently works fully for server interactions, but the client-side is a work in progress
+      ClientListener.java    - (Thread) Holds ServerSocket data for the current client, maintains a list of current connections.
+      ServerInteraction.java - (Thread) Messaging logic for server-side interactions. Besides some basic cleanup type things (cleaning the connection list on disconnect)
+      TCPReceiver.java       - Meant to receive data. This is where the message type is encoded. Has a .getMessage() method that... gets the most recent message for you.
+      TCPSender.java         - Meant to send data. It doesn't do much else.
+      User.java              - Basic object to hold user data
+------------------------------------------------------------------------------------------
+  
+Design Choices:
+  - Message types are not encapsulated with the rest of the message because I just couldn't make it make sense. They are instead passed to TCPReceiver, who then passes them to 
+TCPSender/*Interaction, where it's analyzed
+  - I did not make receiver into a thread because doing that caused a lot of headaches and broke so many things that I had to rebuild from the milestone at one point. The panic related to the suggestion was because I forgot what I was planning to do to get around blocking behavior. Whatever! It works! Not elegant! That’s fine!
+  - *Interaction houses a sender and receiver for every connection, as well as references to the main thread to allow for variable-sharing, thready goodness
+  - Closing threads ended up being shoddy, so… it works, but I’d appreciate not prodding it too hard. (it might be fragile still)
+
+Buggy things:
+  - I never figured out how to sort input streams for threads, so when you receive a request for connection, you have to input things at least twice to have them go through (sometimes it’s three)
+  - Because of the above problem, I couldn’t give an input prompt for the user
+  - If a message is received and you are currently typing your own message, it interrupts and it loses the progress towards the message being written
+
+Tested with three users at once, server on pluto-1 and clients on 2-4.
+This project runs the way it is supposed to when the user uses it the way it is supposed to be used. It’s not pretty. It’s not good for dealing with users being stupid (there are some guards in place, but I lost track of where things are and are not implemented)
+This is also by far the least polished large assignment I think I’ve ever turned in (for any class), so apologies on that front.
+
+Be careful. Be kind. (Thank you!!)
